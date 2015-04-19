@@ -68,7 +68,7 @@ public class BigInteger {
         this.size = this.numbers.length;
     }
 
-    private static BigInteger[] divide_modulus(BigInteger first, BigInteger second) {
+    private static BigInteger[] divide_and_modulus(BigInteger first, BigInteger second) {
 
         if (second.compare(new BigInteger()) == 0) {
             throw new ArithmeticException("Can't divide by zero");
@@ -86,7 +86,7 @@ public class BigInteger {
         do {
 
             second_temp_num = new BigInteger();
-            for (i = 1, current_quotient = 0; i < 10; i++, current_quotient++) {
+            for (i = 1, current_quotient = 0; i <= 10; i++, current_quotient++) {
 
                 second_temp_num = BigInteger.multiply(second, i);
                 if (first_temp_num.compare(second_temp_num) == -1) {
@@ -98,8 +98,13 @@ public class BigInteger {
             second_temp_num.subtract(second);
             first_temp_num.subtract(second_temp_num);
             if (current_index < length) {
-                first_temp_num.multiply(10);
-                first_temp_num.add(Integer.parseInt(first_num.substring(current_index, ++current_index)));
+                do {
+                    first_temp_num.multiply(10);
+                    first_temp_num.add(Integer.parseInt(first_num.substring(current_index, ++current_index)));
+                    if (first_temp_num.compare(second) == -1) {
+                        result += "0";
+                    }
+                } while (current_index < length && first_temp_num.compare(second) == -1);
             }
 
         } while (first_temp_num.compare(second) != -1);
@@ -107,7 +112,7 @@ public class BigInteger {
         return new BigInteger[]{new BigInteger(result), new BigInteger(first_temp_num)};
     }
 
-    private static BigInteger[] divide_modulus(BigInteger first, int second) {
+    private static BigInteger[] divide_and_modulus(BigInteger first, int second) {
 
         if (second == 0) {
             throw new ArithmeticException("Can't divide by zero");
@@ -321,27 +326,14 @@ public class BigInteger {
 
     public static BigInteger divide(BigInteger first, BigInteger second) {
 
-        BigInteger[] divide_modulus = divide_modulus(first, second);
+        BigInteger[] divide_modulus = divide_and_modulus(first, second);
         return divide_modulus[0];
     }
 
     public static BigInteger modulus(BigInteger first, BigInteger second) {
 
-        if (second.compare(new BigInteger()) == 0) {
-            throw new ArithmeticException("Can't find modulus if divisor is zero");
-        }
-
-        if (first.compare(second) == -1) {
-            return new BigInteger(first);
-        }
-
-        BigInteger quotient = BigInteger.divide(first, second);
-        BigInteger temp_result = BigInteger.multiply(second, quotient);
-        BigInteger remainder = BigInteger.subtract(first, temp_result);
-        return remainder;
-
-        /*BigInteger[] divide_modulus = divide_modulus(first, second);
-        return divide_modulus[1];*/
+        BigInteger[] divide_modulus = divide_and_modulus(first, second);
+        return divide_modulus[1];
     }
 
     public static int compare(BigInteger first, BigInteger second) {
@@ -377,9 +369,35 @@ public class BigInteger {
 
         while (number.compare(zero) != 0) {
 
-            operation_result = BigInteger.divide_modulus(number, 2);
+            operation_result = BigInteger.divide_and_modulus(number, 2);
             number = operation_result[0];
             result = operation_result[1] + result;
+        }
+
+        return result;
+    }
+
+    public static BigInteger multiply_modulus(BigInteger first, BigInteger second, BigInteger modulus) {
+
+        BigInteger result = BigInteger.multiply(first, second);
+        result.modulus(modulus);
+        return result;
+    }
+
+    public static BigInteger exponent_modulus(BigInteger number, BigInteger exponent, BigInteger modulus) {
+
+        BigInteger result = new BigInteger("1");
+        BigInteger operating_number = new BigInteger(number);
+        String binary_exponent = exponent.toBinary();
+        int length = binary_exponent.length(), i;
+
+        for (i = length - 1; i >= 0; i--) {
+
+            if (binary_exponent.charAt(i) == '1') {
+                result.multiply_modulus(operating_number, modulus);
+            }
+
+            operating_number.multiply_modulus(operating_number, modulus);
         }
 
         return result;
@@ -449,6 +467,18 @@ public class BigInteger {
     public boolean isPrime() {
 
         return isPrime(this);
+    }
+
+    public String toBinary() {
+
+        return toBinary(this);
+    }
+
+    public void multiply_modulus(BigInteger that, BigInteger modulus) {
+
+        BigInteger result = multiply_modulus(this, that, modulus);
+        this.numbers = result.numbers;
+        this.size = result.size;
     }
 
     public String toString() {

@@ -46,7 +46,7 @@ public class Primality {
             str_final_number = final_number.toString();
             curr_number = Character.digit(str_final_number.charAt(str_final_number.length() - 1), 10);
             curr_number *= val;
-            final_number = new BigInteger(str_final_number.substring(0, str_final_number.length() - 2));
+            final_number = new BigInteger(str_final_number.substring(0, str_final_number.length() - 1));
             if (add) {
                 final_number.add(curr_number);
             } else {
@@ -122,6 +122,51 @@ public class Primality {
         return this.divisibleByN(number, 47, 14, false);
     }
 
+    private boolean checkMillerRabin(BigInteger number, BigInteger remainder, BigInteger base, int power) {
+
+        BigInteger result = BigInteger.exponent_modulus(base, remainder, number);
+        BigInteger compare_number = BigInteger.subtract(number, 1);
+        BigInteger one = new BigInteger("1");
+        int i;
+
+        if (result.compare(one) == 0) {
+            return false;
+        }
+
+        for (i = 0; i < power; i++) {
+
+            if (result.compare(compare_number) == 0) {
+                return false;
+            } else {
+                result.multiply_modulus(result, number);
+            }
+        }
+
+        return true;
+    }
+
+    private boolean millerRabin(BigInteger number, BigInteger base[]) {
+
+        int length = base.length, power = 0, i;
+        BigInteger remainder = BigInteger.subtract(number, 1);
+        BigInteger zero = new BigInteger("0"), two = new BigInteger("2");
+
+        while (BigInteger.modulus(remainder, two).compare(zero) == 0) {
+
+            power++;
+            remainder.divide(two);
+        }
+
+        for (i = 0; i < length; i++) {
+
+            if (this.checkMillerRabin(number, remainder, base[i], power)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public boolean isPrime(BigInteger number) {
 
         if (this.divisibleBy3(number)) {
@@ -180,6 +225,34 @@ public class Primality {
             return false;
         }
 
+        BigInteger base[] = new BigInteger[]{new BigInteger("2"), new BigInteger("3"), new BigInteger("5"),
+                new BigInteger("7"), new BigInteger("11"), new BigInteger("13"), new BigInteger("17"),
+                new BigInteger("19"), new BigInteger("23"), new BigInteger("29"), new BigInteger("31"),
+                new BigInteger("37"), new BigInteger("41"), new BigInteger("43"), new BigInteger("47")};
+
+        if (this.millerRabin(number, base)) {
+            return false;
+        }
+
         return true;
+    }
+
+    public static void main(String[] args) {
+
+        Primality primeTest = new Primality();
+        BigInteger numbers[] = new BigInteger[]{new BigInteger("561"), new BigInteger("27"), new BigInteger("61"),
+                new BigInteger("4033")};
+        int i;
+
+        for (i = 0; i < numbers.length; i++) {
+
+            System.out.print(numbers[i] + " - ");
+            if (primeTest.isPrime(numbers[i])) {
+                System.out.println("Prime");
+            } else {
+                System.out.println("Composite");
+            }
+        }
+
     }
 }

@@ -145,7 +145,12 @@ public class Primality {
         return true;
     }
 
-    private boolean millerRabin(BigInteger number, BigInteger base[]) {
+    private boolean millerRabin(BigInteger number) {
+
+        BigInteger base[] = new BigInteger[]{new BigInteger("2"), new BigInteger("3"), new BigInteger("5"),
+                new BigInteger("7"), new BigInteger("11"), new BigInteger("13"), new BigInteger("17"),
+                new BigInteger("19"), new BigInteger("23"), new BigInteger("29"), new BigInteger("31"),
+                new BigInteger("37"), new BigInteger("41"), new BigInteger("43"), new BigInteger("47")};
 
         int length = base.length, power = 0, i;
         BigInteger remainder = BigInteger.subtract(number, 1);
@@ -225,12 +230,7 @@ public class Primality {
             return false;
         }
 
-        BigInteger base[] = new BigInteger[]{new BigInteger("2"), new BigInteger("3"), new BigInteger("5"),
-                new BigInteger("7"), new BigInteger("11"), new BigInteger("13"), new BigInteger("17"),
-                new BigInteger("19"), new BigInteger("23"), new BigInteger("29"), new BigInteger("31"),
-                new BigInteger("37"), new BigInteger("41"), new BigInteger("43"), new BigInteger("47")};
-
-        if (this.millerRabin(number, base)) {
+        if (this.millerRabin(number)) {
             return false;
         }
 

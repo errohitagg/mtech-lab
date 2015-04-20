@@ -1,17 +1,24 @@
 package com.rsacrypt;
 
+import java.util.Random;
+
 public class RSA {
 
-    private static final String START_NUMBER = "95647806479275528135733781266203904794419563064407";
+    private String startNumber = "1";
 
-    public BigInteger generatePrime(int n) {
+    public MyBigInteger generatePrime(int n) {
 
-        BigInteger prime = new BigInteger(START_NUMBER);
-        int i = 0;
+        MyBigInteger prime = new MyBigInteger(this.startNumber);
+        Random random_number = new Random();
+        int i = 0, increment;
 
         do {
 
-            prime.add(2);
+            do {
+                increment = random_number.nextInt(100);
+            } while (increment % 2 == 1);
+
+            prime = prime.add(increment);
             if (prime.isPrime()) {
                 i++;
             }
@@ -21,7 +28,7 @@ public class RSA {
         return prime;
     }
 
-    public BigInteger generatePrime() {
+    public MyBigInteger generatePrime() {
 
         return this.generatePrime(1);
     }

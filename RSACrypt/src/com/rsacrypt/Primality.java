@@ -2,7 +2,7 @@ package com.rsacrypt;
 
 public class Primality {
 
-    private boolean divisibleBy3(BigInteger number) {
+    private boolean divisibleBy3(MyBigInteger number) {
 
         int sum = 0, i, j, num;
         int numbers[] = number.numbers();
@@ -23,7 +23,7 @@ public class Primality {
         }
     }
 
-    private boolean divisibleBy5(BigInteger number) {
+    private boolean divisibleBy5(MyBigInteger number) {
 
         int size = number.size();
         int numbers[] = number.numbers();
@@ -35,9 +35,9 @@ public class Primality {
         }
     }
 
-    private boolean divisibleByN(BigInteger number, int n, int val, boolean add) {
+    private boolean divisibleByN(MyBigInteger number, int n, int val, boolean add) {
 
-        BigInteger final_number = new BigInteger(number);
+        MyBigInteger final_number = new MyBigInteger(number);
         String str_final_number;
         int curr_number;
 
@@ -46,7 +46,7 @@ public class Primality {
             str_final_number = final_number.toString();
             curr_number = Character.digit(str_final_number.charAt(str_final_number.length() - 1), 10);
             curr_number *= val;
-            final_number = new BigInteger(str_final_number.substring(0, str_final_number.length() - 1));
+            final_number = new MyBigInteger(str_final_number.substring(0, str_final_number.length() - 1));
             if (add) {
                 final_number.add(curr_number);
             } else {
@@ -62,104 +62,103 @@ public class Primality {
         }
     }
 
-    private boolean divisibleBy7(BigInteger number) {
+    private boolean divisibleBy7(MyBigInteger number) {
 
         return this.divisibleByN(number, 7, 2, false);
     }
 
-    private boolean divisibleBy11(BigInteger number) {
+    private boolean divisibleBy11(MyBigInteger number) {
 
         return this.divisibleByN(number, 11, 1, false);
     }
 
-    private boolean divisibleBy13(BigInteger number) {
+    private boolean divisibleBy13(MyBigInteger number) {
 
         return this.divisibleByN(number, 13, 4, true);
     }
 
-    private boolean divisibleBy17(BigInteger number) {
+    private boolean divisibleBy17(MyBigInteger number) {
 
         return this.divisibleByN(number, 17, 5, false);
     }
 
-    private boolean divisibleBy19(BigInteger number) {
+    private boolean divisibleBy19(MyBigInteger number) {
 
         return this.divisibleByN(number, 19, 2, true);
     }
 
-    private boolean divisibleBy23(BigInteger number) {
+    private boolean divisibleBy23(MyBigInteger number) {
 
         return this.divisibleByN(number, 23, 7, true);
     }
 
-    private boolean divisibleBy29(BigInteger number) {
+    private boolean divisibleBy29(MyBigInteger number) {
 
         return this.divisibleByN(number, 29, 3, true);
     }
 
-    private boolean divisibleBy31(BigInteger number) {
+    private boolean divisibleBy31(MyBigInteger number) {
 
         return this.divisibleByN(number, 31, 3, false);
     }
 
-    private boolean divisibleBy37(BigInteger number) {
+    private boolean divisibleBy37(MyBigInteger number) {
 
         return this.divisibleByN(number, 37, 11, false);
     }
 
-    private boolean divisibleBy41(BigInteger number) {
+    private boolean divisibleBy41(MyBigInteger number) {
 
         return this.divisibleByN(number, 41, 4, false);
     }
 
-    private boolean divisibleBy43(BigInteger number) {
+    private boolean divisibleBy43(MyBigInteger number) {
 
         return this.divisibleByN(number, 43, 13, true);
     }
 
-    private boolean divisibleBy47(BigInteger number) {
+    private boolean divisibleBy47(MyBigInteger number) {
 
         return this.divisibleByN(number, 47, 14, false);
     }
 
-    private boolean checkMillerRabin(BigInteger number, BigInteger remainder, BigInteger base, int power) {
+    private boolean checkMillerRabin(MyBigInteger number, MyBigInteger remainder, MyBigInteger base, int power) {
 
-        BigInteger result = BigInteger.exponent_modulus(base, remainder, number);
-        BigInteger compare_number = BigInteger.subtract(number, 1);
-        BigInteger one = new BigInteger("1");
+        MyBigInteger result = base.exponent_modulus(remainder, number);
+        MyBigInteger compare_number = number.subtract(1);
+        MyBigInteger one = new MyBigInteger("1");
         int i;
 
-        if (result.compare(one) == 0) {
+        if (result.compareTo(one) == 0) {
             return false;
         }
 
         for (i = 0; i < power; i++) {
 
-            if (result.compare(compare_number) == 0) {
+            if (result.compareTo(compare_number) == 0) {
                 return false;
             } else {
-                result.multiply_modulus(result, number);
+                result = result.multiply_modulus(result, number);
             }
         }
 
         return true;
     }
 
-    private boolean millerRabin(BigInteger number) {
+    private boolean millerRabin(MyBigInteger number) {
 
-        BigInteger base[] = new BigInteger[]{new BigInteger("2"), new BigInteger("3"), new BigInteger("5"),
-                new BigInteger("7"), new BigInteger("11"), new BigInteger("13"), new BigInteger("17"),
-                new BigInteger("19"), new BigInteger("23"), new BigInteger("29"), new BigInteger("31"),
-                new BigInteger("37"), new BigInteger("41"), new BigInteger("43"), new BigInteger("47")};
+        MyBigInteger base[] = new MyBigInteger[]{new MyBigInteger("2"), new MyBigInteger("3"), new MyBigInteger("5"),
+                new MyBigInteger("7"), new MyBigInteger("11"), new MyBigInteger("13"), new MyBigInteger("17"),
+                new MyBigInteger("19"), new MyBigInteger("23"), new MyBigInteger("29"), new MyBigInteger("31"),
+                new MyBigInteger("37"), new MyBigInteger("41"), new MyBigInteger("43"), new MyBigInteger("47")};
 
         int length = base.length, power = 0, i;
-        BigInteger remainder = BigInteger.subtract(number, 1);
-        BigInteger zero = new BigInteger("0"), two = new BigInteger("2");
+        MyBigInteger remainder = number.subtract(1);
 
-        while (BigInteger.modulus(remainder, two).compare(zero) == 0) {
+        while (remainder.modulus(MyBigInteger.two).compareTo(MyBigInteger.zero) == 0) {
 
             power++;
-            remainder.divide(two);
+            remainder = remainder.divide(MyBigInteger.two);
         }
 
         for (i = 0; i < length; i++) {
@@ -172,7 +171,7 @@ public class Primality {
         return false;
     }
 
-    public boolean isPrime(BigInteger number) {
+    public boolean isPrime(MyBigInteger number) {
 
         if (this.divisibleBy3(number)) {
             return false;
@@ -240,8 +239,8 @@ public class Primality {
     public static void main(String[] args) {
 
         Primality primeTest = new Primality();
-        BigInteger numbers[] = new BigInteger[]{new BigInteger("561"), new BigInteger("27"), new BigInteger("61"),
-                new BigInteger("4033")};
+        MyBigInteger numbers[] = new MyBigInteger[]{new MyBigInteger("561"), new MyBigInteger("27"), new MyBigInteger("61"),
+                new MyBigInteger("4033")};
         int i;
 
         for (i = 0; i < numbers.length; i++) {

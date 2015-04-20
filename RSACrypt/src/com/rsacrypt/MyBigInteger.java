@@ -12,9 +12,9 @@ public class MyBigInteger {
     private int[] numbers;
     private int size;
 
-    public static MyBigInteger zero = new MyBigInteger("0");
-    public static MyBigInteger one = new MyBigInteger("1");
-    public static MyBigInteger two = new MyBigInteger("2");
+    public static MyBigInteger ZERO = new MyBigInteger("0");
+    public static MyBigInteger ONE = new MyBigInteger("1");
+    public static MyBigInteger TWO = new MyBigInteger("2");
 
     public MyBigInteger() {
 
@@ -75,7 +75,7 @@ public class MyBigInteger {
 
     private MyBigInteger[] divide_and_modulus(MyBigInteger that) {
 
-        if (that.compareTo(MyBigInteger.zero) == 0) {
+        if (that.compareTo(MyBigInteger.ZERO) == 0) {
             throw new ArithmeticException("Can't divide by zero");
         }
 
@@ -258,7 +258,9 @@ public class MyBigInteger {
             if (number >= that.numbers[j]) {
                 result[k] = number - that.numbers[j];
             } else {
-                number = BASE + number;
+                if (i > 0) {
+                    number = BASE + number;
+                }
                 result[k] = number - that.numbers[j];
                 borrow = true;
             }
@@ -377,9 +379,9 @@ public class MyBigInteger {
             dividend = divisor;
             divisor = result[1];
 
-        } while (divisor.compareTo(zero) != 0);
+        } while (divisor.compareTo(MyBigInteger.ZERO) != 0);
 
-        if (dividend.compareTo(one) == 0) {
+        if (dividend.compareTo(MyBigInteger.ONE) == 0) {
             return true;
         } else {
             return false;
@@ -414,7 +416,7 @@ public class MyBigInteger {
 
     public MyBigInteger inverse_modulus(MyBigInteger that) {
 
-        MyBigInteger power = that.subtract(2);
+        MyBigInteger power = that.subtract(MyBigInteger.ONE);
         MyBigInteger result = this.exponent_modulus(power, that);
 
         return result;
@@ -426,7 +428,7 @@ public class MyBigInteger {
         MyBigInteger number = new MyBigInteger(this);
         MyBigInteger operation_result[];
 
-        while (number.compareTo(zero) != 0) {
+        while (number.compareTo(MyBigInteger.ZERO) != 0) {
 
             operation_result = number.divide_and_modulus(2);
             number = operation_result[0];
@@ -452,8 +454,9 @@ public class MyBigInteger {
     public static void main(String[] args) {
 
         try {
-            MyBigInteger myObj1 = new MyBigInteger("34093452948438923492389902482342012333");
-            MyBigInteger myObj2 = new MyBigInteger("14482342549401412414905809238523249");
+
+            MyBigInteger myObj1 = new MyBigInteger("34093452948438923492389902482342012333"); // 34093452948438923492389902482342012333
+            MyBigInteger myObj2 = new MyBigInteger("14482342549401412414905809238523249"); // 14482342549401412414905809238523249
             MyBigInteger myObj3 = new MyBigInteger("95647806479275528135733781266203904794419563064407");
 
             BigInteger obj1 = new BigInteger("34093452948438923492389902482342012333");
@@ -462,14 +465,18 @@ public class MyBigInteger {
 
             MyBigInteger ansAdd = myObj1.add(myObj2);
             BigInteger expAdd = obj1.add(obj2);
-            MyBigInteger ansSub = myObj1.subtract(myObj2);
-            BigInteger expSub = obj1.subtract(obj2);
+            MyBigInteger ansSub1 = myObj1.subtract(myObj2);
+            BigInteger expSub1 = obj1.subtract(obj2);
+            MyBigInteger ansSub2 = myObj2.subtract(myObj1);
+            BigInteger expSub2 = obj2.subtract(obj1);
             MyBigInteger ansMul = myObj1.multiply(myObj2);
             BigInteger expMul = obj1.multiply(obj2);
             MyBigInteger ansDiv = myObj1.divide(myObj2);
             BigInteger expDiv = obj1.divide(obj2);
             MyBigInteger ansMod = myObj1.modulus(myObj2);
             BigInteger expMod = obj1.mod(obj2);
+            MyBigInteger ansInv = myObj2.inverse_modulus(myObj1);
+            BigInteger expInv = obj2.modInverse(obj1);
             String ansBinary = myObj1.toBinary();
             String expBinary = "11001101001100010100100000010011110101111000110001001010000111101100000011000101001000110010011100010000110011110010110101101";
             int ansCmp = myObj1.compareTo(myObj2);
@@ -489,9 +496,12 @@ public class MyBigInteger {
             System.out.println("Number1 + Number2 = " + ansAdd);
             System.out.println("Expected Answer   = " + expAdd);
             System.out.println("Result = " + (ansAdd.toString().compareTo(expAdd.toString()) == 0 ? "Pass" : "Fail"));
-            System.out.println("Number1 - Number2 = " + ansSub);
-            System.out.println("Expected Answer   = " + expSub);
-            System.out.println("Result = " + (ansSub.toString().compareTo(expSub.toString()) == 0 ? "Pass" : "Fail"));
+            System.out.println("Number1 - Number2 = " + ansSub1);
+            System.out.println("Expected Answer   = " + expSub1);
+            System.out.println("Result = " + (ansSub1.toString().compareTo(expSub1.toString()) == 0 ? "Pass" : "Fail"));
+            System.out.println("Number1 - Number2 = " + ansSub2);
+            System.out.println("Expected Answer   = " + expSub2);
+            System.out.println("Result = " + (ansSub2.toString().compareTo(expSub2.toString()) == 0 ? "Pass" : "Fail"));
             System.out.println("Number1 * Number2 = " + ansMul);
             System.out.println("Expected Answer   = " + expMul);
             System.out.println("Result = " + (ansMul.toString().compareTo(expMul.toString()) == 0 ? "Pass" : "Fail"));
@@ -501,6 +511,9 @@ public class MyBigInteger {
             System.out.println("Number1 % Number2 = " + ansMod);
             System.out.println("Expected Answer   = " + expMod);
             System.out.println("Result = " + (ansMod.toString().compareTo(expMod.toString()) == 0 ? "Pass" : "Fail"));
+            System.out.println("Number1 Inverse (mod Number2) = " + ansInv);
+            System.out.println("Expected Answer               = " + expInv);
+            System.out.println("Result = " + (ansInv.toString().compareTo(expInv.toString()) == 0 ? "Pass" : "Fail"));
             System.out.println("Number1 compare Number2 = " + ansCmp);
             System.out.println("Expected Answer         = " + expCmp);
             System.out.println("Result = " + (ansCmp == expCmp ? "Pass" : "Fail"));

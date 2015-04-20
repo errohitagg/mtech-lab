@@ -155,10 +155,10 @@ public class Primality {
         int length = base.length, power = 0, i;
         MyBigInteger remainder = number.subtract(1);
 
-        while (remainder.modulus(MyBigInteger.two).compareTo(MyBigInteger.zero) == 0) {
+        while (remainder.modulus(MyBigInteger.TWO).compareTo(MyBigInteger.ZERO) == 0) {
 
             power++;
-            remainder = remainder.divide(MyBigInteger.two);
+            remainder = remainder.divide(MyBigInteger.TWO);
         }
 
         for (i = 0; i < length; i++) {

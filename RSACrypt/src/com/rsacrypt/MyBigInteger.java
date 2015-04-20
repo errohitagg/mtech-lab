@@ -15,6 +15,7 @@ public class MyBigInteger {
     public static MyBigInteger ZERO = new MyBigInteger("0");
     public static MyBigInteger ONE = new MyBigInteger("1");
     public static MyBigInteger TWO = new MyBigInteger("2");
+    public static MyBigInteger TEN = new MyBigInteger("10");
 
     public MyBigInteger() {
 
@@ -93,7 +94,7 @@ public class MyBigInteger {
             second_temp_num = new MyBigInteger();
             for (i = 1, current_quotient = 0; i <= 10; i++, current_quotient++) {
 
-                second_temp_num = that.multiply(i);
+                second_temp_num = that.multiply(new MyBigInteger(String.valueOf(i)));
                 if (first_temp_num.compareTo(second_temp_num) == -1) {
                     break;
                 }
@@ -104,8 +105,8 @@ public class MyBigInteger {
             first_temp_num = first_temp_num.subtract(second_temp_num);
             if (current_index < length) {
                 do {
-                    first_temp_num = first_temp_num.multiply(10);
-                    first_temp_num = first_temp_num.add(Integer.parseInt(first_num.substring(current_index, ++current_index)));
+                    first_temp_num = first_temp_num.multiply(MyBigInteger.TEN);
+                    first_temp_num = first_temp_num.add(new MyBigInteger(first_num.substring(current_index, ++current_index)));
                     if (first_temp_num.compareTo(that) == -1) {
                         result += "0";
                     }
@@ -117,36 +118,6 @@ public class MyBigInteger {
         return new MyBigInteger[]{new MyBigInteger(result), new MyBigInteger(first_temp_num)};
     }
 
-    private MyBigInteger[] divide_and_modulus(int that) {
-
-        if (that == 0) {
-            throw new ArithmeticException("Can't divide by zero");
-        }
-
-        if (this.compareTo(new MyBigInteger(String.valueOf(that))) == -1) {
-            return new MyBigInteger[]{new MyBigInteger(), new MyBigInteger(this)};
-        }
-
-        String result = "";
-        int length = this.size, current_number;
-        int i, quotient, remainder = 0;
-
-        for (i = 0; i < length; i++) {
-
-            if (remainder > 0) {
-                current_number = (remainder * BASE) + this.numbers[i];
-            } else {
-                current_number = this.numbers[i];
-            }
-
-            quotient = current_number / that;
-            remainder = current_number % that;
-            result += String.format("%04d", quotient);
-        }
-
-        return new MyBigInteger[]{new MyBigInteger(result), new MyBigInteger(String.valueOf(remainder))};
-    }
-
     public int size() {
 
         return this.size;
@@ -155,29 +126,6 @@ public class MyBigInteger {
     public int[] numbers() {
 
         return this.numbers;
-    }
-
-    public MyBigInteger add(int that) {
-
-        int resultSize = this.size + 1;
-        int[] result = new int[resultSize];
-        int number, carry = 0, i = this.size - 1, k = resultSize - 1;
-
-        number = carry + this.numbers[i--] + that;
-        result[k--] = number % BASE;
-        carry = number / BASE;
-
-        for (; i >= 0; i--, k--) {
-            number = carry + this.numbers[i];
-            result[k] = number % BASE;
-            carry = number / BASE;
-        }
-
-        if (carry > 0) {
-            result[k] = carry;
-        }
-
-        return new MyBigInteger(result);
     }
 
     public MyBigInteger add(MyBigInteger that) {
@@ -206,35 +154,6 @@ public class MyBigInteger {
 
         if (carry > 0) {
             result[k] = carry;
-        }
-
-        return new MyBigInteger(result);
-    }
-
-    public MyBigInteger subtract(int that) {
-
-        int resultSize = this.size + 1;
-        int[] result = new int[resultSize];
-        int number, i = this.size - 1, j, k = resultSize - 1;
-        boolean borrow = false;
-
-        number = this.numbers[i--];
-        if (number >= that) {
-            result[k--] = number - that;
-        } else {
-            number = BASE + number;
-            result[k--] = number - that;
-            borrow = true;
-        }
-
-        for (; i >= 0; i--, k--) {
-
-            number = this.numbers[i];
-            if (borrow) {
-                number = number - 1;
-                borrow = false;
-            }
-            result[k] = number;
         }
 
         return new MyBigInteger(result);
@@ -277,26 +196,6 @@ public class MyBigInteger {
         }
 
         return new MyBigInteger(result);
-    }
-
-    public MyBigInteger multiply(int that) {
-
-        int resultSize = this.size + 1;
-        int[] temp_result = new int[resultSize];
-        int number, i, j, k, carry = 0;
-
-        for (i = this.size - 1, k = resultSize - 1; i >= 0; i--, k--) {
-
-            number = (this.numbers[i] * that) + carry;
-            temp_result[k] = number % BASE;
-            carry = number / BASE;
-        }
-
-        if (carry > 0) {
-            temp_result[k] = carry;
-        }
-
-        return new MyBigInteger(temp_result);
     }
 
     public MyBigInteger multiply(MyBigInteger that) {
@@ -430,7 +329,7 @@ public class MyBigInteger {
 
         while (number.compareTo(MyBigInteger.ZERO) != 0) {
 
-            operation_result = number.divide_and_modulus(2);
+            operation_result = number.divide_and_modulus(MyBigInteger.TWO);
             number = operation_result[0];
             result = operation_result[1].toString() + result;
         }

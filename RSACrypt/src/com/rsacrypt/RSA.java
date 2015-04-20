@@ -21,7 +21,7 @@ public class RSA {
                 increment = random_number.nextInt(100);
             } while (increment % 2 == 1);
 
-            prime = prime.add(increment);
+            prime = prime.add(new MyBigInteger(String.valueOf(increment)));
             if (prime.isPrime()) {
                 i++;
             }
@@ -54,7 +54,7 @@ public class RSA {
         algo.startNumber = p.toString();
         MyBigInteger q = new MyBigInteger("53");//algo.generatePrime(10);
         MyBigInteger n = p.multiply(q);
-        MyBigInteger phiN = p.subtract(1).multiply(q.subtract(1));
+        MyBigInteger phiN = p.subtract(MyBigInteger.ONE).multiply(q.subtract(MyBigInteger.ONE));
         MyBigInteger e = new MyBigInteger("17");
         MyBigInteger d = e.inverse_modulus(phiN);
 

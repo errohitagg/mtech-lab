@@ -48,9 +48,9 @@ public class Primality {
             curr_number *= val;
             final_number = new MyBigInteger(str_final_number.substring(0, str_final_number.length() - 1));
             if (add) {
-                final_number.add(curr_number);
+                final_number.add(new MyBigInteger(String.valueOf(curr_number)));
             } else {
-                final_number.subtract(curr_number);
+                final_number.subtract(new MyBigInteger(String.valueOf(curr_number)));
             }
         }
 
@@ -125,7 +125,7 @@ public class Primality {
     private boolean checkMillerRabin(MyBigInteger number, MyBigInteger remainder, MyBigInteger base, int power) {
 
         MyBigInteger result = base.exponent_modulus(remainder, number);
-        MyBigInteger compare_number = number.subtract(1);
+        MyBigInteger compare_number = number.subtract(MyBigInteger.ONE);
         MyBigInteger one = new MyBigInteger("1");
         int i;
 
@@ -153,7 +153,7 @@ public class Primality {
                 new MyBigInteger("37"), new MyBigInteger("41"), new MyBigInteger("43"), new MyBigInteger("47")};
 
         int length = base.length, power = 0, i;
-        MyBigInteger remainder = number.subtract(1);
+        MyBigInteger remainder = number.subtract(MyBigInteger.ONE);
 
         while (remainder.modulus(MyBigInteger.TWO).compareTo(MyBigInteger.ZERO) == 0) {
 

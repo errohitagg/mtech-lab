@@ -11,6 +11,7 @@ public class MyBigInteger {
 
     private int[] numbers;
     private int size;
+    private boolean isNegative;
 
     public static MyBigInteger ZERO = new MyBigInteger("0");
     public static MyBigInteger ONE = new MyBigInteger("1");
@@ -54,13 +55,17 @@ public class MyBigInteger {
 
         this.numbers = integer.numbers;
         this.size = integer.size;
+        this.isNegative = integer.isNegative;
     }
 
     private void validate(char[] number) {
 
         int length = number.length, i;
         for (i = 0; i < length; i++) {
-            if (number[i] < '0' || number[i] > '9') {
+            if (number[i] == '-') {
+                number[i] = '0';
+                this.isNegative = true;
+            } else if (number[i] < '0' || number[i] > '9') {
                 throw new IllegalArgumentException("Number must contain only digits");
             }
         }
@@ -130,9 +135,22 @@ public class MyBigInteger {
 
     public MyBigInteger add(MyBigInteger that) {
 
+        boolean isResultNegative = false;
         int resultSize = (this.size > that.size ? this.size : that.size) + 1;
         int[] result = new int[resultSize];
         int number, carry = 0, i, j, k;
+
+        if (this.isNegative && !that.isNegative) {
+            MyBigInteger newInteger = new MyBigInteger(this);
+            newInteger.isNegative = false;
+            return that.subtract(newInteger);
+        } else if (!this.isNegative && that.isNegative) {
+            MyBigInteger newInteger = new MyBigInteger(that);
+            newInteger.isNegative = false;
+            return this.subtract(newInteger);
+        } else if (this.isNegative && that.isNegative) {
+            isResultNegative = true;
+        }
 
         for (i = this.size - 1, j = that.size - 1, k = resultSize - 1; i >= 0 && j >= 0; i--, j--, k--) {
             number = carry + this.numbers[i] + that.numbers[j];
@@ -156,7 +174,12 @@ public class MyBigInteger {
             result[k] = carry;
         }
 
-        return new MyBigInteger(result);
+        MyBigInteger resultInteger = new MyBigInteger(result);
+        if (resultInteger.compareTo(MyBigInteger.ZERO) != 0) {
+            resultInteger.isNegative = isResultNegative;
+        }
+
+        return resultInteger;
     }
 
     public MyBigInteger subtract(MyBigInteger that) {
@@ -164,30 +187,58 @@ public class MyBigInteger {
         int resultSize = (this.size > that.size ? this.size : that.size) + 1;
         int[] result = new int[resultSize];
         int number, i, j, k;
-        boolean borrow = false;
+        boolean borrow = false, isResultNegative = false;
+        MyBigInteger first, second;
 
-        for (i = this.size - 1, j = that.size - 1, k = resultSize - 1; i >= 0 && j >= 0; i--, j--, k--) {
+        if (this.isNegative && !that.isNegative) {
 
-            number = this.numbers[i];
+            MyBigInteger newInteger = new MyBigInteger(this);
+            newInteger.isNegative = false;
+
+            MyBigInteger resultInteger = newInteger.add(that);
+            resultInteger.isNegative = true;
+            return resultInteger;
+
+        } else if (!this.isNegative && that.isNegative) {
+
+            MyBigInteger newInteger = new MyBigInteger(that);
+            newInteger.isNegative = false;
+            return this.add(newInteger);
+        }
+
+        if (this.compareTo(that) > 0) {
+            isResultNegative = this.isNegative;
+            first = this;
+            second = that;
+        } else {
+            isResultNegative = !that.isNegative;
+            first = that;
+            second = this;
+        }
+
+
+        for (i = first.size - 1, j = second.size - 1, k = resultSize - 1; i >= 0 && j >= 0; i--, j--, k--) {
+
+            number = first.numbers[i];
             if (borrow) {
                 number = number - 1;
                 borrow = false;
             }
 
-            if (number >= that.numbers[j]) {
-                result[k] = number - that.numbers[j];
+            if (number >= second.numbers[j]) {
+                result[k] = number - second.numbers[j];
             } else {
                 if (i > 0) {
                     number = BASE + number;
                 }
-                result[k] = number - that.numbers[j];
+                result[k] = number - second.numbers[j];
                 borrow = true;
             }
         }
 
         for (; i >= 0; i--, k--) {
 
-            number = this.numbers[i];
+            number = first.numbers[i];
             if (borrow) {
                 number = number - 1;
                 borrow = false;
@@ -195,7 +246,12 @@ public class MyBigInteger {
             result[k] = number;
         }
 
-        return new MyBigInteger(result);
+        MyBigInteger resultInteger = new MyBigInteger(result);
+        if (resultInteger.compareTo(MyBigInteger.ZERO) != 0) {
+            resultInteger.isNegative = isResultNegative;
+        }
+
+        return resultInteger;
     }
 
     public MyBigInteger multiply(MyBigInteger that) {
@@ -225,6 +281,10 @@ public class MyBigInteger {
             }
 
             result = result.add(new MyBigInteger(temp_result));
+        }
+
+        if ((this.isNegative || that.isNegative) && !(this.isNegative && that.isNegative) && result.compareTo(MyBigInteger.ZERO) != 0) {
+            result.isNegative = true;
         }
 
         return result;
@@ -315,10 +375,26 @@ public class MyBigInteger {
 
     public MyBigInteger inverse_modulus(MyBigInteger that) {
 
-        MyBigInteger power = that.subtract(MyBigInteger.ONE);
-        MyBigInteger result = this.exponent_modulus(power, that);
+        MyBigInteger first = new MyBigInteger(that), second = new MyBigInteger(this);
+        MyBigInteger t1 = new MyBigInteger(MyBigInteger.ZERO), t2 = new MyBigInteger(MyBigInteger.ONE);
+        MyBigInteger divide_and_modulus[], temp_result;
 
-        return result;
+        do {
+
+            divide_and_modulus = first.divide_and_modulus(second);
+            first = second;
+            second = divide_and_modulus[1];
+            temp_result = t1.subtract(t2.multiply(divide_and_modulus[0]));
+            t1 = t2;
+            t2 = temp_result;
+
+        } while(second.compareTo(MyBigInteger.ZERO) != 0);
+
+        if (t1.isNegative) {
+            t1 = t1.add(that);
+        }
+
+        return t1;
     }
 
     public String toBinary() {
@@ -340,6 +416,11 @@ public class MyBigInteger {
 	public String toString() {
 
         String number = "", temp_number = "";
+
+        if (this.isNegative) {
+            number += "-";
+        }
+
         for (int i = 0; i < this.size; i++) {
             temp_number = String.valueOf(this.numbers[i]);
             if (temp_number.length() < BASE_SIZE && i > 0) {
@@ -410,7 +491,7 @@ public class MyBigInteger {
             System.out.println("Number1 % Number2 = " + ansMod);
             System.out.println("Expected Answer   = " + expMod);
             System.out.println("Result = " + (ansMod.toString().compareTo(expMod.toString()) == 0 ? "Pass" : "Fail"));
-            System.out.println("Number1 Inverse (mod Number2) = " + ansInv);
+            System.out.println("Number2 Inverse (mod Number1) = " + ansInv);
             System.out.println("Expected Answer               = " + expInv);
             System.out.println("Result = " + (ansInv.toString().compareTo(expInv.toString()) == 0 ? "Pass" : "Fail"));
             System.out.println("Number1 compare Number2 = " + ansCmp);

@@ -4,29 +4,54 @@ import java.util.Random;
 
 public class RSA {
 
-    private String startNumber = "1";
+    private String startNumber;
+    private MyBigInteger publicKey;
+    private MyBigInteger privateKey;
+    private MyBigInteger modulus;
 
     public RSA() {
+
+        this(new MyBigInteger("1"));
+    }
+
+    public RSA(MyBigInteger startNumber) {
+
+        System.out.println("\nInitializing RSA (generating keys) ...");
+
+        this.startNumber = startNumber.toString();
+        MyBigInteger first = this.generatePrime(100);
+
+        this.startNumber = first.toString();
+        MyBigInteger second = this.generatePrime(100);
+
+        this.modulus = first.multiply(second);
+        MyBigInteger phi_modulus = first.subtract(MyBigInteger.ONE).multiply(second.subtract(MyBigInteger.ONE));
+
+        MyBigInteger publicKey = new MyBigInteger("65537");
+        do {
+            publicKey = publicKey.add(MyBigInteger.TWO);
+        } while (publicKey.isCoPrime(phi_modulus) == false);
+
+        this.publicKey = publicKey;
+        this.privateKey = this.publicKey.inverse_modulus(phi_modulus);
+
+        System.out.println("\nPublic Key (e) = " + this.publicKey.toString());
+        System.out.println("Private Key (d) = " + this.privateKey.toString());
+        System.out.println("Modulus (n) = " + this.modulus.toString() + "\n");
     }
 
     public MyBigInteger generatePrime(int n) {
 
         MyBigInteger prime = new MyBigInteger(this.startNumber);
         Random random_number = new Random();
-        int i = 0, increment;
+        int i = 0, count = random_number.nextInt(n) + 1;
 
         do {
-
-            do {
-                increment = random_number.nextInt(100);
-            } while (increment % 2 == 1);
-
-            prime = prime.add(new MyBigInteger(String.valueOf(increment)));
+            prime = prime.add(MyBigInteger.TWO);
             if (prime.isPrime()) {
                 i++;
             }
-
-        } while(i <= n);
+        } while(i < count);
 
         return prime;
     }
@@ -38,23 +63,45 @@ public class RSA {
 
     public String encrypt(String plainText) {
 
-        return "";
+        int length = plainText.length(), i;
+        String plainTextNumber = "";
+
+        for (i = 0; i < length; i++) {
+            plainTextNumber += String.format("%03d", (int)plainText.charAt(i));
+        }
+
+        MyBigInteger plainTextInteger = new MyBigInteger(plainTextNumber);
+        MyBigInteger cipherTextNumber = plainTextInteger.exponent_modulus(this.publicKey, this.modulus);
+
+        return cipherTextNumber.toString();
     }
 
     public String decrypt(String cipherText) {
 
-        return "";
+        MyBigInteger cipherTextInteger = new MyBigInteger(cipherText);
+        MyBigInteger plainTextInteger = cipherTextInteger.exponent_modulus(this.privateKey, this.modulus);
+
+        String plainTextNumber = plainTextInteger.toString();
+        String text, plainText = "";
+        int length = plainTextNumber.length(), i;
+
+        for (i = length; i > 0; i -= 3) {
+            if (i - 3 >= 0) {
+                text = plainTextNumber.substring(i - 3, i);
+            } else {
+                text = plainTextNumber.substring(0, i);
+            }
+            plainText = String.valueOf(Character.toChars(Integer.parseInt(text))) + plainText;
+        }
+
+        return plainText;
     }
 
     public static void main(String[] args) {
-	    // write your code here
 
         // http://doctrina.org/How-RSA-Works-With-Examples.html#
-
-        RSA algo = new RSA();
-        MyBigInteger p = new MyBigInteger("12131072439211271897323671531612440428472427633701410925634549312301964373042085619324197365322416866541017057361365214171711713797974299334871062829803541");//algo.generatePrime(5);
-        algo.startNumber = p.toString();
-        MyBigInteger q = new MyBigInteger("12027524255478748885956220793734512128733387803682075433653899983955179850988797899869146900809131611153346817050832096022160146366346391812470987105415233");//algo.generatePrime(10);
+        MyBigInteger p = new MyBigInteger("12131072439211271897323671531612440428472427633701410925634549312301964373042085619324197365322416866541017057361365214171711713797974299334871062829803541");
+        MyBigInteger q = new MyBigInteger("12027524255478748885956220793734512128733387803682075433653899983955179850988797899869146900809131611153346817050832096022160146366346391812470987105415233");
         MyBigInteger n = p.multiply(q);
 
         MyBigInteger p1 = p.subtract(MyBigInteger.ONE);

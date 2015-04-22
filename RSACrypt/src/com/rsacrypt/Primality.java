@@ -8,7 +8,6 @@ public class Primality {
         int numbers[] = number.numbers();
 
         for (i = 0; i < number.size(); i++) {
-
             num = numbers[i];
             while (num != 0) {
                 sum += num % 10;
@@ -42,11 +41,11 @@ public class Primality {
         int curr_number;
 
         while (final_number.size() > 1) {
-
             str_final_number = final_number.toString();
             curr_number = Character.digit(str_final_number.charAt(str_final_number.length() - 1), 10);
             curr_number *= val;
             final_number = new MyBigInteger(str_final_number.substring(0, str_final_number.length() - 1));
+
             if (add) {
                 final_number.add(new MyBigInteger(String.valueOf(curr_number)));
             } else {
@@ -126,15 +125,13 @@ public class Primality {
 
         MyBigInteger result = base.exponent_modulus(remainder, number);
         MyBigInteger compare_number = number.subtract(MyBigInteger.ONE);
-        MyBigInteger one = new MyBigInteger("1");
         int i;
 
-        if (result.compareTo(one) == 0) {
+        if (result.compareTo(MyBigInteger.ONE) == 0) {
             return false;
         }
 
         for (i = 0; i < power; i++) {
-
             if (result.compareTo(compare_number) == 0) {
                 return false;
             } else {
@@ -156,13 +153,11 @@ public class Primality {
         MyBigInteger remainder = number.subtract(MyBigInteger.ONE);
 
         while (remainder.modulus(MyBigInteger.TWO).compareTo(MyBigInteger.ZERO) == 0) {
-
             power++;
             remainder = remainder.divide(MyBigInteger.TWO);
         }
 
         for (i = 0; i < length; i++) {
-
             if (this.checkMillerRabin(number, remainder, base[i], power)) {
                 return true;
             }
@@ -239,19 +234,21 @@ public class Primality {
     public static void main(String[] args) {
 
         Primality primeTest = new Primality();
-        MyBigInteger numbers[] = new MyBigInteger[]{new MyBigInteger("561"), new MyBigInteger("27"), new MyBigInteger("61"),
-                new MyBigInteger("4033")};
+        MyBigInteger numbers[] = new MyBigInteger[]{new MyBigInteger("561"), new MyBigInteger("27"), new MyBigInteger("61"), new MyBigInteger("4033")};
         int i;
 
         for (i = 0; i < numbers.length; i++) {
 
             System.out.print(numbers[i] + " - ");
+
             if (primeTest.isPrime(numbers[i])) {
+
                 System.out.println("Prime");
+
             } else {
+
                 System.out.println("Composite");
             }
         }
-
     }
 }

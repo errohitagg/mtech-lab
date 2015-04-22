@@ -1,7 +1,6 @@
 package com.rsacrypt;
 
 import java.util.Arrays;
-import java.math.BigInteger;
 
 public class MyBigInteger {
 
@@ -32,11 +31,11 @@ public class MyBigInteger {
 
         this.validate(number);
 
-        int length = number.length;
+        int length = number.length, i, j, positions;
         int size = (length % BASE_SIZE == 0) ? (length / BASE_SIZE) : ((length / BASE_SIZE) + 1);
-        int i, j, positions;
 
         this.numbers = new int[size];
+
         for (i = length, j = size - 1; i > 0; i -= BASE_SIZE, j--) {
             positions = (i >= BASE_SIZE) ? BASE_SIZE : i;
             this.numbers[j] = Integer.parseInt(new String(number, i - positions, positions));
@@ -61,6 +60,7 @@ public class MyBigInteger {
     private void validate(char[] number) {
 
         int length = number.length, i;
+
         for (i = 0; i < length; i++) {
             if (number[i] == '-') {
                 number[i] = '0';
@@ -76,6 +76,7 @@ public class MyBigInteger {
         while (this.numbers[0] == 0 && this.numbers.length > 1) {
             this.numbers = Arrays.copyOfRange(this.numbers, 1, this.numbers.length);
         }
+
         this.size = this.numbers.length;
     }
 
@@ -95,10 +96,8 @@ public class MyBigInteger {
         MyBigInteger first_temp_num = new MyBigInteger(first_num.substring(0, current_index)), second_temp_num;
 
         do {
-
             second_temp_num = new MyBigInteger();
             for (i = 1, current_quotient = 0; i <= 10; i++, current_quotient++) {
-
                 second_temp_num = that.multiply(new MyBigInteger(String.valueOf(i)));
                 if (first_temp_num.compareTo(second_temp_num) == -1) {
                     break;
@@ -108,6 +107,7 @@ public class MyBigInteger {
             result += current_quotient;
             second_temp_num = second_temp_num.subtract(that);
             first_temp_num = first_temp_num.subtract(second_temp_num);
+
             if (current_index < length) {
                 do {
                     first_temp_num = first_temp_num.multiply(MyBigInteger.TEN);
@@ -141,13 +141,17 @@ public class MyBigInteger {
         int number, carry = 0, i, j, k;
 
         if (this.isNegative && !that.isNegative) {
+
             MyBigInteger newInteger = new MyBigInteger(this);
             newInteger.isNegative = false;
             return that.subtract(newInteger);
+
         } else if (!this.isNegative && that.isNegative) {
+
             MyBigInteger newInteger = new MyBigInteger(that);
             newInteger.isNegative = false;
             return this.subtract(newInteger);
+
         } else if (this.isNegative && that.isNegative) {
             isResultNegative = true;
         }
@@ -218,7 +222,6 @@ public class MyBigInteger {
 
 
         for (i = first.size - 1, j = second.size - 1, k = resultSize - 1; i >= 0 && j >= 0; i--, j--, k--) {
-
             number = first.numbers[i];
             if (borrow) {
                 number = number - 1;
@@ -237,7 +240,6 @@ public class MyBigInteger {
         }
 
         for (; i >= 0; i--, k--) {
-
             number = first.numbers[i];
             if (borrow) {
                 number = number - 1;
@@ -262,7 +264,6 @@ public class MyBigInteger {
         MyBigInteger result = new MyBigInteger();
 
         for (i = this.size - 1; i >= 0; i--) {
-
             temp_result = new int[resultSize];
             carry = 0;
             for (k = resultSize - 1; k > resultSize + i - this.size; k--) {
@@ -270,7 +271,6 @@ public class MyBigInteger {
             }
 
             for (j = that.size - 1; j >= 0; j--, k--) {
-
                 number = (this.numbers[i] * that.numbers[j]) + carry;
                 temp_result[k] = number % BASE;
                 carry = number / BASE;
@@ -279,7 +279,6 @@ public class MyBigInteger {
             if (carry > 0) {
                 temp_result[k] = carry;
             }
-
             result = result.add(new MyBigInteger(temp_result));
         }
 
@@ -309,7 +308,6 @@ public class MyBigInteger {
         } else if (this.size < that.size) {
             return -1;
         } else {
-
             for (int i = 0; i < this.size; i++) {
                 if (this.numbers[i] > that.numbers[i]) {
                     return 1;
@@ -318,6 +316,7 @@ public class MyBigInteger {
                 }
             }
         }
+
         return 0;
     }
 
@@ -333,11 +332,9 @@ public class MyBigInteger {
         MyBigInteger result[];
 
         do {
-
             result = dividend.divide_and_modulus(divisor);
             dividend = divisor;
             divisor = result[1];
-
         } while (divisor.compareTo(MyBigInteger.ZERO) != 0);
 
         if (dividend.compareTo(MyBigInteger.ONE) == 0) {
@@ -362,11 +359,9 @@ public class MyBigInteger {
         int length = binary_exponent.length(), i;
 
         for (i = length - 1; i >= 0; i--) {
-
             if (binary_exponent.charAt(i) == '1') {
                 result = result.multiply_modulus(operating_number, modulus);
             }
-
             operating_number = operating_number.multiply_modulus(operating_number, modulus);
         }
 
@@ -380,14 +375,12 @@ public class MyBigInteger {
         MyBigInteger divide_and_modulus[], temp_result;
 
         do {
-
             divide_and_modulus = first.divide_and_modulus(second);
             first = second;
             second = divide_and_modulus[1];
             temp_result = t1.subtract(t2.multiply(divide_and_modulus[0]));
             t1 = t2;
             t2 = temp_result;
-
         } while(second.compareTo(MyBigInteger.ZERO) != 0);
 
         if (t1.isNegative) {
@@ -404,7 +397,6 @@ public class MyBigInteger {
         MyBigInteger operation_result[];
 
         while (number.compareTo(MyBigInteger.ZERO) != 0) {
-
             operation_result = number.divide_and_modulus(MyBigInteger.TWO);
             number = operation_result[0];
             result = operation_result[1].toString() + result;
@@ -416,7 +408,6 @@ public class MyBigInteger {
 	public String toString() {
 
         String number = "", temp_number = "";
-
         if (this.isNegative) {
             number += "-";
         }
@@ -428,6 +419,7 @@ public class MyBigInteger {
             }
             number += temp_number;
         }
+
         return number;
     }
 
@@ -435,82 +427,43 @@ public class MyBigInteger {
 
         try {
 
-            MyBigInteger myObj1 = new MyBigInteger("34093452948438923492389902482342012333"); // 34093452948438923492389902482342012333
-            MyBigInteger myObj2 = new MyBigInteger("14482342549401412414905809238523249"); // 14482342549401412414905809238523249
+            MyBigInteger myObj1 = new MyBigInteger("34093452948438923492389902482342012333");
+            MyBigInteger myObj2 = new MyBigInteger("14482342549401412414905809238523249");
             MyBigInteger myObj3 = new MyBigInteger("95647806479275528135733781266203904794419563064407");
 
-            BigInteger obj1 = new BigInteger("34093452948438923492389902482342012333");
-            BigInteger obj2 = new BigInteger("14482342549401412414905809238523249");
-            BigInteger obj3 = new BigInteger("95647806479275528135733781266203904794419563064407");
-
             MyBigInteger ansAdd = myObj1.add(myObj2);
-            BigInteger expAdd = obj1.add(obj2);
             MyBigInteger ansSub1 = myObj1.subtract(myObj2);
-            BigInteger expSub1 = obj1.subtract(obj2);
             MyBigInteger ansSub2 = myObj2.subtract(myObj1);
-            BigInteger expSub2 = obj2.subtract(obj1);
             MyBigInteger ansMul = myObj1.multiply(myObj2);
-            BigInteger expMul = obj1.multiply(obj2);
             MyBigInteger ansDiv = myObj1.divide(myObj2);
-            BigInteger expDiv = obj1.divide(obj2);
             MyBigInteger ansMod = myObj1.modulus(myObj2);
-            BigInteger expMod = obj1.mod(obj2);
             MyBigInteger ansInv = myObj2.inverse_modulus(myObj1);
-            BigInteger expInv = obj2.modInverse(obj1);
             String ansBinary = myObj1.toBinary();
-            String expBinary = "11001101001100010100100000010011110101111000110001001010000111101100000011000101001000110010011100010000110011110010110101101";
             int ansCmp = myObj1.compareTo(myObj2);
-            int expCmp = obj1.compareTo(obj2);
             boolean ansPrime1 = myObj1.isPrime();
             boolean ansPrime2 = myObj3.isPrime();
-            boolean expPrime1 = obj1.isProbablePrime(100);
-            boolean expPrime2 = obj3.isProbablePrime(100);
             boolean ansCoPrime = myObj1.isCoPrime(myObj2);
-            BigInteger expGcd = obj1.gcd(obj2);
-            boolean expCoPrime = expGcd.compareTo(BigInteger.ONE) == 0 ? true : false;
 
             System.out.println("Number1 = " + myObj1);
             System.out.println("Number2 = " + myObj2);
             System.out.println("Number3 = " + myObj3);
             System.out.println();
             System.out.println("Number1 + Number2 = " + ansAdd);
-            System.out.println("Expected Answer   = " + expAdd);
-            System.out.println("Result = " + (ansAdd.toString().compareTo(expAdd.toString()) == 0 ? "Pass" : "Fail"));
             System.out.println("Number1 - Number2 = " + ansSub1);
-            System.out.println("Expected Answer   = " + expSub1);
-            System.out.println("Result = " + (ansSub1.toString().compareTo(expSub1.toString()) == 0 ? "Pass" : "Fail"));
             System.out.println("Number1 - Number2 = " + ansSub2);
-            System.out.println("Expected Answer   = " + expSub2);
-            System.out.println("Result = " + (ansSub2.toString().compareTo(expSub2.toString()) == 0 ? "Pass" : "Fail"));
             System.out.println("Number1 * Number2 = " + ansMul);
-            System.out.println("Expected Answer   = " + expMul);
-            System.out.println("Result = " + (ansMul.toString().compareTo(expMul.toString()) == 0 ? "Pass" : "Fail"));
             System.out.println("Number1 / Number2 = " + ansDiv);
-            System.out.println("Expected Answer   = " + expDiv);
-            System.out.println("Result = " + (ansDiv.toString().compareTo(expDiv.toString()) == 0 ? "Pass" : "Fail"));
             System.out.println("Number1 % Number2 = " + ansMod);
-            System.out.println("Expected Answer   = " + expMod);
-            System.out.println("Result = " + (ansMod.toString().compareTo(expMod.toString()) == 0 ? "Pass" : "Fail"));
             System.out.println("Number2 Inverse (mod Number1) = " + ansInv);
-            System.out.println("Expected Answer               = " + expInv);
-            System.out.println("Result = " + (ansInv.toString().compareTo(expInv.toString()) == 0 ? "Pass" : "Fail"));
             System.out.println("Number1 compare Number2 = " + ansCmp);
-            System.out.println("Expected Answer         = " + expCmp);
-            System.out.println("Result = " + (ansCmp == expCmp ? "Pass" : "Fail"));
             System.out.println("To Binary (Number1) = " + ansBinary);
-            System.out.println("Expected Answer     = " + expBinary);
-            System.out.println("Result = " + (ansBinary.compareTo(expBinary) == 0 ? "Pass" : "Fail"));
             System.out.println("Number1 Prime    = " + ansPrime1);
-            System.out.println("Expected Answer  = " + expPrime1);
-            System.out.println("Result = " + (ansPrime1 == expPrime1 ? "Pass" : "Fail"));
             System.out.println("Number3 Prime    = " + ansPrime2);
-            System.out.println("Expected Answer  = " + expPrime2);
-            System.out.println("Result = " + (ansPrime2 == expPrime2 ? "Pass" : "Fail"));
             System.out.println("Number1 & Number2 CoPrime = " + ansCoPrime);
-            System.out.println("Expected Answer           = " + expCoPrime);
-            System.out.println("Result = " + (ansCoPrime == expCoPrime ? "Pass" : "Fail"));
             System.out.println("Done");
+
         } catch (Exception e) {
+
             System.out.println(e.getMessage());
         }
     }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="Program01" Database="">
+  <Project Name="Program01" Path="Program01.project" Active="No"/>
+  <Project Name="Program02" Path="../Program02/Program02.project" Active="No"/>
+  <Project Name="Program03" Path="../Program03/Program03.project" Active="No"/>
+  <Project Name="Program04" Path="../Program04/Program04.project" Active="No"/>
+  <Project Name="Program05" Path="../Program05/Program05.project" Active="No"/>
+  <Project Name="Program07" Path="../Program07/Program07.project"/>
+  <Project Name="Program06" Path="../Program06/Program06.project" Active="No"/>
+  <Project Name="temp" Path="../temp/temp.project" Active="Yes"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Project Name="Program01" ConfigName="Debug"/>
+      <Project Name="Program02" ConfigName="Debug"/>
+      <Project Name="Program03" ConfigName="Debug"/>
+      <Project Name="Program04" ConfigName="Debug"/>
+      <Project Name="Program05" ConfigName="Debug"/>
+      <Project Name="Program07" ConfigName="Debug"/>
+      <Project Name="Program06" ConfigName="Debug"/>
+      <Project Name="temp" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release" Selected="yes">
+      <Project Name="Program01" ConfigName="Release"/>
+      <Project Name="Program02" ConfigName="Release"/>
+      <Project Name="Program03" ConfigName="Release"/>
+      <Project Name="Program04" ConfigName="Release"/>
+      <Project Name="Program05" ConfigName="Release"/>
+      <Project Name="Program07" ConfigName="Release"/>
+      <Project Name="Program06" ConfigName="Release"/>
+      <Project Name="temp" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>

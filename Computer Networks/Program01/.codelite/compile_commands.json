@@ -1,9 +1,0 @@
-[{
-  "file": "C:\\projects\\mtech-lab\\Computer Networks\\Program01\\main.cpp",
-  "directory": "C:\\projects\\mtech-lab\\Computer Networks\\Program01",
-  "command": "C:/TDM-GCC-64/bin/g++.exe -c \"C:\\projects\\mtech-lab\\Computer Networks\\Program01\\main.cpp\" -o \"C:\\projects\\mtech-lab\\Computer Networks\\Program01\\main.cpp\".o  -g  -O0  -Wall -I. -I."
- }, {
-  "file": "C:\\projects\\mtech-lab\\Computer Networks\\Program02\\main.cpp",
-  "directory": "C:\\projects\\mtech-lab\\Computer Networks\\Program02",
-  "command": "C:/TDM-GCC-64/bin/g++.exe -c \"C:\\projects\\mtech-lab\\Computer Networks\\Program02\\main.cpp\" -o \"C:\\projects\\mtech-lab\\Computer Networks\\Program02\\main.cpp\".o  -g  -O0  -Wall -I. -I."
- }]
